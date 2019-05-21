@@ -1,0 +1,41 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as mp
+
+dataset = pd.read_csv('Social_Network_Ads.csv')
+X = dataset.iloc[:,2:4].values
+y = dataset.iloc[:,4].values
+
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=0)
+
+"""Feature scalling is required to bring all the values in the same scale so that there is no domination by any high value"""
+#feature scaling is a must to do when we are using euclidian distance algorithm like knn,SVM
+from sklearn.preprocessing import StandardScaler
+sc_X = StandardScaler()
+X_train = sc_X.fit_transform(X_train)
+X_test = sc_X.transform(X_test)
+
+#Fitting the Random Forest classifier to the training set
+#n-estimator in RandomForestClassifier decides how may trees to pick to take a decision to classify the test point
+# And the classification is done on which class the maximum votes have been given by tress
+
+#criterion='entropy'
+#Gini is used to minimize misclassification
+#Entropy is used  for exploratory analysis
+
+from sklearn.ensemble import RandomForestClassifier
+classifier =  RandomForestClassifier(n_estimators=10,criterion='entropy')
+
+classifier.fit(X_train,y_train)
+
+#Predecting the test result
+y_pred = classifier.predict(X_test)
+
+#Making the confusion matrix
+from sklearn.metrics import confusion_matrix
+confusion_matrix(y_test,y_pred)
+
+from sklearn.metrics import accuracy_score
+accuracy_score(y_test,y_pred)
+
